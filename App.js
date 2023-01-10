@@ -1,20 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {StatusBar} from 'expo-status-bar';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import List from './components/list';
 
-
-
- const App = () => {
+const App = () => {
   return (
     <>
-    <SafeAreaView style={styles.container}>
-      <List/>
-    </SafeAreaView>
-    <StatusBar style="auto" />
+      <SafeAreaView style={styles.container}>
+        <List />
+      </SafeAreaView>
+      <StatusBar style="auto" />
     </>
-    
   );
-}
+};
 
 export default App;
 

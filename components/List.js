@@ -1,7 +1,4 @@
-import {
-  FlatList,
-  StyleSheet,
-} from 'react-native';
+import {FlatList} from 'react-native';
 import ListItem from './ListItem';
 
 const mediaArray = [
@@ -41,7 +38,7 @@ const List = () => {
   return (
     <FlatList
       data={mediaArray}
-      renderItem={({item}) => <ListItem singleMedia={item} /> }
+      renderItem={({item}) => <ListItem singleMedia={item} />}
     />
   );
 };

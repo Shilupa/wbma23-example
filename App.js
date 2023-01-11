@@ -1,14 +1,9 @@
 import {StatusBar} from 'expo-status-bar';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import List from './components/list';
+import {StyleSheet, SafeAreaView} from 'react-native';
+import List from './components/List';
 
 const App = () => {
+  //console.log('App starting!')
   return (
     <>
       <SafeAreaView style={styles.container}>

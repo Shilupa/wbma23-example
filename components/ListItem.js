@@ -1,54 +1,67 @@
-import {Image, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import React from 'react';
 import PropTypes from 'prop-types';
-import {uploadsUrl} from '../utils/variables';
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  SafeAreaView,
+  StyleSheet,
+  Image,
+} from 'react-native';
 
-const ListItem = ({singleMedia, navigation}) => {
-  const item = singleMedia;
+const ListItem = (props) => {
   return (
-    <TouchableOpacity
-      style={styles.row}
-      onPress={() => {
-        navigation.navigate('Single', item);
-      }}
-    >
-      <View style={styles.box}>
-        <Image
-          style={styles.image}
-          source={{uri: uploadsUrl + item.thumbnails?.w160}}
-        />
-      </View>
-      <View style={styles.box}>
-        <Text style={styles.listTitle}>{item.title}</Text>
-        <Text>{item.description}</Text>
-      </View>
-    </TouchableOpacity>
+    <SafeAreaView>
+      <TouchableOpacity style={styles.row}>
+        <View style={styles.imagebox}>
+          <Image
+            source={{uri: props.item.thumbnails.w160}}
+            style={styles.image}
+          />
+        </View>
+        <SafeAreaView style={styles.textbox}>
+          <Text style={styles.listTitle}>{props.item.title}</Text>
+          <Text style={{fontFamily: 'monospace'}}>
+            {props.item.description}
+          </Text>
+        </SafeAreaView>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    backgroundColor: '#ccc',
+    padding: 15,
+    backgroundColor: '#eee',
+    borderRadius: 6,
+    marginHorizontal: 10,
     marginBottom: 10,
   },
-  box: {
+  imagebox: {
     flex: 1,
-    padding: 10,
   },
   image: {
     flex: 1,
-    minHeight: 100,
+    borderBottomLeftRadius: 80,
+    borderRadius: 10,
+  },
+  textbox: {
+    flex: 2,
+    padding: 10,
+    marginLeft: 10,
   },
   listTitle: {
     fontWeight: 'bold',
     fontSize: 20,
     paddingBottom: 15,
+    fontFamily: 'PTSerif-Italic',
   },
 });
 
 ListItem.propTypes = {
-  singleMedia: PropTypes.object,
-  navigation: PropTypes.object,
+  item: PropTypes.object.isRequired,
 };
 
 export default ListItem;

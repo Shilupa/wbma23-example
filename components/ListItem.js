@@ -8,24 +8,39 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
+import {useFonts} from 'expo-font';
 
 const ListItem = (props) => {
+  /**
+   * Getting fonts from assets/fonts folder
+   */
+  const [fontsLoaded] = useFonts({
+    'PTSerif-BoldItalic': require('../assets/fonts/PTSerif-BoldItalic.ttf'),
+    'PTSerif-Regular': require('../assets/fonts/PTSerif-Regular.ttf'),
+  });
+
   return (
     <SafeAreaView>
-      <TouchableOpacity style={styles.row}>
-        <View style={styles.imagebox}>
-          <Image
-            source={{uri: props.item.thumbnails.w160}}
-            style={styles.image}
-          />
-        </View>
-        <SafeAreaView style={styles.textbox}>
-          <Text style={styles.listTitle}>{props.item.title}</Text>
-          <Text style={{fontFamily: 'monospace'}}>
-            {props.item.description}
-          </Text>
-        </SafeAreaView>
-      </TouchableOpacity>
+      {/* // Renders until font is loaded */}
+      {!fontsLoaded ? (
+        <Text>Font is loading...</Text>
+      ) : (
+        <>
+          {/* // Renders after font is loaded */}
+          <TouchableOpacity style={styles.row}>
+            <View style={styles.imagebox}>
+              <Image
+                source={{uri: props.item.thumbnails.w160}}
+                style={styles.image}
+              />
+            </View>
+            <SafeAreaView style={styles.textbox}>
+              <Text style={styles.listTitle}>{props.item.title}</Text>
+              <Text style={styles.text}>{props.item.description}</Text>
+            </SafeAreaView>
+          </TouchableOpacity>
+        </>
+      )}
     </SafeAreaView>
   );
 };
@@ -34,7 +49,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     padding: 15,
-    backgroundColor: '#eee',
+    backgroundColor: 'white',
     borderRadius: 6,
     marginHorizontal: 10,
     marginBottom: 10,
@@ -48,15 +63,20 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   textbox: {
-    flex: 2,
+    flex: 3,
     padding: 10,
     marginLeft: 10,
   },
   listTitle: {
+    fontFamily: 'PTSerif-Regular',
+    color: '#A52A2A',
     fontWeight: 'bold',
     fontSize: 20,
     paddingBottom: 15,
-    fontFamily: 'PTSerif-Italic',
+    // fontFamily: 'PTSerif-Italic',
+  },
+  text: {
+    fontFamily: 'PTSerif-BoldItalic',
   },
 });
 

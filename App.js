@@ -5,11 +5,15 @@ import List from './components/List';
 import Icon from 'react-native-vector-icons/Feather';
 import {useState} from 'react';
 import {MainProvider} from './contexts/MainContext';
+import {useFonts} from 'expo-font';
 
-const STYLES = ['lightgreen', 'yellow', 'magenta'];
+const STYLES = ['purple', 'pink', 'orange', 'teal'];
 
 const App = () => {
-  const [statusBarStyle, setStatusBarStyle] = useState(STYLES[1]);
+  const [statusBarStyle, setStatusBarStyle] = useState(STYLES[0]);
+  const [fontsLoaded] = useFonts({
+    'PTSerif-BoldItalic': require('./assets/fonts/PTSerif-BoldItalic.ttf'),
+  });
 
   const changeStatusBarStyle = () => {
     const styleId = STYLES.indexOf(statusBarStyle) + 1;
@@ -18,38 +22,50 @@ const App = () => {
     } else {
       setStatusBarStyle(STYLES[styleId]);
     }
+    console.log(statusBarStyle);
   };
 
   return (
     <MainProvider>
       <SafeAreaView style={GlobalStyles.AndroidSafeArea}>
-        <SafeAreaView style={{flex: 1}}>
-          <Image source={require('./assets/cat.jpeg')} style={styles.image} />
-          <Icon name="settings" style={styles.icon} />
-          <Text style={styles.text}>Homeless cat </Text>
-        </SafeAreaView>
-        <SafeAreaView style={styles.buttonStyle}>
-          <Button
-            title="Change StatusBar Color"
-            onPress={changeStatusBarStyle}
-          />
-        </SafeAreaView>
-        <SafeAreaView style={{flex: 1}}>
-          <List />
-        </SafeAreaView>
+        {/* // Renders until font is loaded */}
+        {!fontsLoaded ? (
+          <Text>Font loading...</Text>
+        ) : (
+          <>
+            {/* // Renders after font is loaded */}
+            <SafeAreaView style={{flex: 1}}>
+              <Image
+                source={require('./assets/cat.jpeg')}
+                style={styles.image}
+              />
+              <Icon name="settings" style={styles.icon} />
+              <Text style={styles.text}>ADOPT ME 🐾 </Text>
+            </SafeAreaView>
+            <SafeAreaView style={styles.buttonStyle}>
+              <Button
+                color={'#6666FF'}
+                title="Press here to change status bar color"
+                onPress={changeStatusBarStyle}
+              />
+            </SafeAreaView>
+            <SafeAreaView style={{flex: 1}}>
+              <List />
+            </SafeAreaView>
+          </>
+        )}
       </SafeAreaView>
-      <StatusBar style="auto" backgroundColor={statusBarStyle} />
+      <StatusBar backgroundColor={statusBarStyle} style="auto" />
     </MainProvider>
   );
 };
 
 const styles = StyleSheet.create({
   buttonStyle: {
-    marginTop: 60,
+    marginTop: 5,
     marginBottom: 10,
     marginLeft: 20,
     marginRight: 20,
-    backgroundColor: '#E0FFFF',
   },
 
   image: {
@@ -59,12 +75,12 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 80,
   },
   text: {
-    fontFamily: 'PTSerif-Italic',
+    fontFamily: 'PTSerif-BoldItalic',
     color: 'white',
     fontWeight: 'bold',
-    backgroundColor: 'blue',
+    backgroundColor: 'violet',
     position: 'absolute',
-    bottom: -10,
+    bottom: 20,
     marginLeft: 20,
     paddingLeft: 25,
     paddingBottom: 5,

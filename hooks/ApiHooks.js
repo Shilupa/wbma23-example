@@ -63,10 +63,19 @@ const useAuthentication = () => {
 
 // https://media.mw.metropolia.fi/wbma/docs/#api-User
 const useUser = () => {
-  const checkUser = async () => {
+  const getUserByToken = async (token) => {
     // call https://media.mw.metropolia.fi/wbma/docs/#api-User-CheckUserName
+    const options = {
+      method: 'GET',
+      headers: {'x-access-token': token},
+    };
+    try {
+      return await doFetch(baseUrl + 'users/user', options);
+    } catch (error) {
+      throw new Error('checkUser: ' + error.message);
+    }
   };
-  return {checkUser};
+  return {getUserByToken};
 };
 
 export {useMedia, useAuthentication, useUser};

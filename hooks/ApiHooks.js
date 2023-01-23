@@ -75,7 +75,6 @@ const useUser = () => {
       throw new Error('checkUser: ' + error.message);
     }
   };
-
   const postUser = async (userData) => {
     const options = {
       method: 'post',
@@ -85,7 +84,6 @@ const useUser = () => {
       body: JSON.stringify(userData),
     };
     try {
-      // TODO: use fetch to send request to login endpoint and return the result as json, handle errors with try/catch and response.ok
       return await doFetch(baseUrl + 'users', options);
     } catch (error) {
       throw new Error('postUser: ' + error.message);
@@ -97,12 +95,12 @@ const useUser = () => {
 const useTag = () => {
   const getFilesByTag = async (tag) => {
     try {
-      return await doFetch(baseUrl + 'tags' + tag);
+      return await doFetch(baseUrl + 'tags/' + tag);
     } catch (error) {
-      throw new Error('getFilesByTag', error.message);
+      throw new Error('getFilesByTag, ' + error.message);
     }
   };
-  return getFilesByTag;
+  return {getFilesByTag};
 };
 
 export {useMedia, useAuthentication, useUser, useTag};

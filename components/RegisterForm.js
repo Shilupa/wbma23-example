@@ -58,17 +58,24 @@ const RegisterForm = () => {
             onChangeText={onChange}
             value={value}
             autoCapitalize="none"
+            errorMessage={errors.username && errors.username.message}
           />
         )}
         name="username"
       />
-      {errors.username?.type === 'required' && <Text>is required</Text>}
-      {errors.username?.type === 'minLength' && (
-        <Text>min length is 3 characters</Text>
-      )}
+
       <Controller
         control={control}
-        rules={{required: true, minLength: 5}}
+        rules={{
+          required: {
+            value: true,
+            message: 'min 5 characters, needs one number, one uppercase letter',
+          },
+          pattern: {
+            value: /(?=.*\p{Lu})(?=.*[0-9]).{5,}/u,
+            message: 'min 5 characters, needs one number, one uppercase letter',
+          },
+        }}
         render={({field: {onChange, onBlur, value}}) => (
           <Input
             placeholder="Password"
@@ -76,11 +83,12 @@ const RegisterForm = () => {
             onChangeText={onChange}
             value={value}
             secureTextEntry={true}
+            errorMessage={errors.password && errors.password.message}
           />
         )}
         name="password"
       />
-      {errors.password && <Text>Password (min. 5 chars) is required .</Text>}
+
       <Controller
         control={control}
         rules={{required: true}}
@@ -106,7 +114,6 @@ const RegisterForm = () => {
             onChangeText={onChange}
             value={value}
             autoCapitalize="words"
-            errorMessage={errors.username && errors.username.message}
           />
         )}
         name="full_name"

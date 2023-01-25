@@ -12,12 +12,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useUser} from '../hooks/ApiHooks';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
-import {Button} from '@rneui/themed';
-import { Text } from '@rneui/base';
+import {Button, Text} from '@rneui/base';
 
 const Login = ({navigation}) => {
   const {setIsLoggedIn, setUser} = useContext(MainContext);
   const {getUserByToken} = useUser();
+
   const [toggleForm, setToggleForm] = useState(true);
 
   const checkToken = async () => {
@@ -49,9 +49,14 @@ const Login = ({navigation}) => {
         style={styles.container}
       >
         {toggleForm ? <LoginForm /> : <RegisterForm />}
-        <Text>{toggleForm ? 'Go to register' : 'Go to login'}</Text>
+        <Text>
+          {toggleForm
+            ? 'No account yet? Please register.'
+            : 'Already have an account? Please login.'}
+        </Text>
         <Button
-          title={toggleForm ? 'Register' : 'Login'}
+          type="outline"
+          title={toggleForm ? 'Go to register' : 'Go to login'}
           onPress={() => {
             setToggleForm(!toggleForm);
           }}
@@ -63,10 +68,7 @@ const Login = ({navigation}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 16,
   },
 });
 

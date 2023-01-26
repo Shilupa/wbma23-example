@@ -1,68 +1,71 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-} from 'react-native';
-import PropTypes from 'prop-types';
+import React, {useContext} from 'react';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useUser} from '../hooks/ApiHooks';
-import LoginForm from '../components/LoginForm';
-import RegisterForm from '../components/RegisterForm';
-import {Button, Card, Text} from '@rneui/base';
+import {useAuthentication} from '../hooks/ApiHooks';
+import {Controller, useForm} from 'react-hook-form';
+import {Button, Input, Card} from '@rneui/themed';
 
-const Login = ({navigation}) => {
+const LoginForm = () => {
   const {setIsLoggedIn, setUser} = useContext(MainContext);
-  const {getUserByToken} = useUser();
-  const [toggleForm, setToggleForm] = useState(true);
+  const {postLogin} = useAuthentication();
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+  } = useForm({
+    defaultValues: {username: '', password: ''},
+  });
 
-  const checkToken = async () => {
+  const logIn = async (loginData) => {
+    console.log('Login button pressed', loginData);
+    // const data = {username: 'ilkkamtk', password: 'q1w2e3r4'};
     try {
-      const userToken = await AsyncStorage.getItem('userToken');
-      // if no token available, do nothing
-      if (userToken === null) return;
-      const userData = await getUserByToken(userToken);
-      console.log('checkToken', userData);
-      setUser(userData);
+      const loginResult = await postLogin(loginData);
+      console.log('logIn', loginResult);
+      await AsyncStorage.setItem('userToken', loginResult.token);
+      setUser(loginResult.user);
       setIsLoggedIn(true);
     } catch (error) {
-      console.error('checkToken', error);
+      console.error('logIn', error);
+      // TODO: notify user about failed login attempt
     }
   };
 
-  useEffect(() => {
-    checkToken();
-  }, []);
-
   return (
-    <TouchableOpacity onPress={() => Keyboard.dismiss()} activeOpacity={1}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        {toggleForm ? <LoginForm /> : <RegisterForm />}
-        <Card>
-          <Text>
-            {toggleForm
-              ? 'No account yet? Please register.'
-              : 'Already have an account? Please login.'}
-          </Text>
-          <Button
-            type="outline"
-            title={toggleForm ? 'Go to register' : 'Go to login'}
-            onPress={() => {
-              setToggleForm(!toggleForm);
-            }}
+    <Card>
+      <Card.Title>Login Form</Card.Title>
+      <Controller
+        control={control}
+        rules={{required: {value: true, message: 'is required'}}}
+        render={({field: {onChange, onBlur, value}}) => (
+          <Input
+            placeholder="Username"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            errorMessage={errors.username && errors.username.message}
           />
-        </Card>
-      </KeyboardAvoidingView>
-    </TouchableOpacity>
+        )}
+        name="username"
+      />
+      <Controller
+        control={control}
+        rules={{required: {value: true, message: 'is required'}}}
+        render={({field: {onChange, onBlur, value}}) => (
+          <Input
+            placeholder="Password"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            secureTextEntry={true}
+            errorMessage={errors.password && errors.password.message}
+          />
+        )}
+        name="password"
+      />
+      <Button title="Sign in!" onPress={handleSubmit(logIn)} />
+    </Card>
   );
 };
 
-Login.propTypes = {
-  navigation: PropTypes.object,
-};
-
-export default Login;
+export default LoginForm;

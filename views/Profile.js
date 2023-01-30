@@ -1,9 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
+import {Button, ScrollView} from 'react-native';
 import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useTag} from '../hooks/ApiHooks';
 import {uploadsUrl} from '../utils/variables';
-import {Button, Card, Icon, ListItem} from '@rneui/themed';
+import {Card, Icon, ListItem} from '@rneui/themed';
+import EditProfileForm from '../components/EditProfileForm';
+import EditPasswordForm from '../components/EditPasswordForm';
 
 const Profile = () => {
   const {getFilesByTag} = useTag();
@@ -24,31 +27,35 @@ const Profile = () => {
   }, []);
 
   return (
-    <Card>
-      <Card.Title>{user.username}</Card.Title>
-      <Card.Image source={{uri: uploadsUrl + avatar}} />
-      <ListItem>
-        <Icon name="email" />
-        <ListItem.Title>{user.email}</ListItem.Title>
-      </ListItem>
-      <ListItem>
-        <Icon name="badge" />
-        <ListItem.Title>{user.full_name}</ListItem.Title>
-      </ListItem>
-      <Button
-        title="Logout!"
-        onPress={async () => {
-          console.log('Logging out!');
-          setUser({});
-          setIsLoggedIn(false);
-          try {
-            await AsyncStorage.clear();
-          } catch (error) {
-            console.error('clearing asyncstorage failed', error);
-          }
-        }}
-      />
-    </Card>
+    <ScrollView>
+      <Card>
+        <Card.Title>{user.username}</Card.Title>
+        <Card.Image source={{uri: uploadsUrl + avatar}} />
+        <ListItem>
+          <Icon name="email" />
+          <ListItem.Title>{user.email}</ListItem.Title>
+        </ListItem>
+        <ListItem>
+          <Icon name="badge" />
+          <ListItem.Title>{user.full_name}</ListItem.Title>
+        </ListItem>
+        <Button
+          title="Logout!"
+          onPress={async () => {
+            console.log('Logging out!');
+            setUser({});
+            setIsLoggedIn(false);
+            try {
+              await AsyncStorage.clear();
+            } catch (error) {
+              console.error('clearing asyncstorage failed', error);
+            }
+          }}
+        />
+      </Card>
+      <EditProfileForm />
+      <EditPasswordForm />
+    </ScrollView>
   );
 };
 

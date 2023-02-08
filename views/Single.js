@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {uploadsUrl} from '../utils/variables';
 import PropTypes from 'prop-types';
 import {Text, Card, ListItem, Icon} from '@rneui/themed';
@@ -6,9 +6,10 @@ import {Video} from 'expo-av';
 import {ScrollView} from 'react-native';
 import {useFavourite, useUser} from '../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {MainContext} from '../contexts/MainContext';
 
 const Single = ({route}) => {
-  console.log(route.params);
+  // console.log(route.params);
   const {
     title,
     description,
@@ -16,13 +17,14 @@ const Single = ({route}) => {
     time_added: timeAdded,
     user_id: userId,
     media_type: type,
-    screeshot,
     file_id: fileId,
+    filesize,
   } = route.params;
   const video = useRef(null);
   const [owner, setOwner] = useState({});
   const [likes, setLikes] = useState([]);
-  const [userLikesIt] = useState(false);
+  const [userLikesIt, setUserLikesIt] = useState(false);
+  const {user} = useContext(MainContext);
   const {getUserById} = useUser();
   const {getFavouritesByFileId, postFavourite, deleteFavourite} =
     useFavourite();
@@ -36,16 +38,23 @@ const Single = ({route}) => {
 
   const getLikes = async () => {
     const likes = await getFavouritesByFileId(fileId);
-    console.log('likes', likes);
+    // console.log('likes', likes, 'user', user);
     setLikes(likes);
-    // TODO: check if the current user id is included in the 'likesä array and
-    // set the 'userLikesIt' accordingly
+    // check if the current user id is included in the 'likes' array and
+    // set the 'userLikesIt' state accordingly
+    for (const like of likes) {
+      if (like.user_id === user.user_id) {
+        setUserLikesIt(true);
+        break;
+      }
+    }
   };
 
   const likeFile = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       await postFavourite(fileId, token);
+      setUserLikesIt(true);
       getLikes();
     } catch (error) {
       // note: you cannot like same file multiple times
@@ -56,6 +65,7 @@ const Single = ({route}) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       await deleteFavourite(fileId, token);
+      setUserLikesIt(false);
       getLikes();
     } catch (error) {
       // note: you cannot like same file multiple times
@@ -86,8 +96,6 @@ const Single = ({route}) => {
               console.log(error);
             }}
             isLooping
-            usePoster
-            posterSource={{uri: uploadsUrl + screeshot}}
           />
         )}
         <Card.Divider />
@@ -99,6 +107,8 @@ const Single = ({route}) => {
         <ListItem>
           <Icon name="schedule" />
           <Text>{new Date(timeAdded).toLocaleString('fi-FI')}</Text>
+          <Icon name="save" />
+          <Text>{(filesize / 1000000).toFixed(2)} MB</Text>
         </ListItem>
         <ListItem>
           <Icon name="person" />
